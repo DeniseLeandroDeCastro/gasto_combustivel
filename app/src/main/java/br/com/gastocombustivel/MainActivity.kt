@@ -1,0 +1,52 @@
+package br.com.gastocombustivel
+
+import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import br.com.gastocombustivel.databinding.ActivityMainBinding
+
+class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    /*
+    O lateinit vai instanciar o binding apenas quando for preciso,
+    evitando que o app quebre.
+     */
+    private lateinit var binding: ActivityMainBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //O viewBinding faz a conexão entre o layout e o código, para que os elementos possam funcionar.
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.buttonCalculate.setOnClickListener(this)
+    }
+
+    override fun onClick(view: View?) {
+        if (view!!.id == R.id.button_calculate) {
+            calculate()
+        }
+    }
+
+    private fun isValid(): Boolean {
+        return(binding.editDistance.text.toString() != ""
+                && binding.editPrice.text.toString() != ""
+                && binding.editAutonomy.text.toString() != ""
+                && binding.editAutonomy.text.toString().toFloat() != 0f)
+    }
+
+    private fun calculate() {
+
+        if (isValid()) {
+            val distance = binding.editDistance.text.toString().toFloat()
+            val price = binding.editPrice.text.toString().toFloat()
+            val autonomy = binding.editAutonomy.text.toString().toFloat()
+
+            val totalValue = (distance * price) / autonomy
+            binding.textTotalValue.text = "R$ ${"%.2f".format(totalValue)}"
+        } else {
+            Toast.makeText(this, R.string.validation_fill_all_fields, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
